@@ -1,6 +1,27 @@
 {
-  "extends": "../../tsconfig.base.json",
+  // Self-contained: `jssg test` cannot resolve an `extends` that points
+  // outside this package, so the shared policy
+  // (packages/mcp-server-tsconfig/tsconfig.policy.json) is copied here.
+  // scripts/tsconfig-policy.test.mjs fails if the two drift apart.
   "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noUncheckedSideEffectImports": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "skipLibCheck": false,
     "target": "ES2022",
     // The codemod declares no runtime capabilities (codemod.yaml) and uses
     // no runtime globals, so the program gets only the ES lib.
