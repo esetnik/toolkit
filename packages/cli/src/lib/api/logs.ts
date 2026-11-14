@@ -205,22 +205,24 @@ export async function listLogs(
       const result = await listOrganizationEvents({
         ...config,
         path: { organization_id_or_slug: orgSlug },
-        query: omitUndefined({
-          dataset: "logs" as const,
+        query: {
+          ...omitUndefined({
+            project:
+              numericProjectId === undefined ? undefined : [numericProjectId],
+            query: fullQuery || undefined,
+            cursor,
+            statsPeriod:
+              options.start || options.end
+                ? undefined
+                : (options.statsPeriod ?? "30d"),
+            start: options.start,
+            end: options.end,
+            sort: toApiSort(options.sort),
+          }),
+          dataset: "logs",
           field: fields,
-          project:
-            numericProjectId === undefined ? undefined : [numericProjectId],
-          query: fullQuery || undefined,
           per_page: perPage,
-          cursor,
-          statsPeriod:
-            options.start || options.end
-              ? undefined
-              : (options.statsPeriod ?? "30d"),
-          start: options.start,
-          end: options.end,
-          sort: toApiSort(options.sort),
-        }),
+        },
       });
 
       const { data: raw, nextCursor } = unwrapPaginatedResult<unknown>(

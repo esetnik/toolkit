@@ -592,25 +592,27 @@ async function fetchTransactionsPage(
   const result = await listOrganizationEvents({
     ...getOrgSdkConfig(),
     path: { organization_id_or_slug: orgSlug },
-    query: omitUndefined({
-      dataset: "spans" as const,
+    query: {
+      ...omitUndefined({
+        project:
+          numericProjectId === undefined
+            ? undefined
+            : [String(numericProjectId)],
+        statsPeriod:
+          options.start || options.end
+            ? undefined
+            : (options.statsPeriod ?? "7d"),
+        start: options.start,
+        end: options.end,
+        cursor: options.cursor,
+      }),
+      dataset: "spans",
       field: TRANSACTION_FIELDS,
-      project:
-        numericProjectId === undefined ? undefined : [String(numericProjectId)],
-      // Convert empty string to undefined so the param is omitted entirely;
-      // sending `query=` causes the Sentry API to behave differently than
-      // omitting the parameter.
-      query: fullQuery || undefined,
+      // Never empty: it always starts with `is_transaction:true`.
+      query: fullQuery,
       per_page: perPage,
-      statsPeriod:
-        options.start || options.end
-          ? undefined
-          : (options.statsPeriod ?? "7d"),
-      start: options.start,
-      end: options.end,
       sort: options.sort === "duration" ? "-span.duration" : "-timestamp",
-      cursor: options.cursor,
-    }),
+    },
   });
   const page = unwrapPaginatedResult<unknown>(
     result,
@@ -739,21 +741,25 @@ async function fetchSpansPage(
   const result = await listOrganizationEvents({
     ...getOrgSdkConfig(),
     path: { organization_id_or_slug: orgSlug },
-    query: omitUndefined({
-      dataset: "spans" as const,
+    query: {
+      ...omitUndefined({
+        project: projectParam === undefined ? undefined : [projectParam],
+        // Omit an empty query: Sentry treats `query=` differently from no
+        // query parameter.
+        query: fullQuery || undefined,
+        statsPeriod:
+          options.start || options.end
+            ? undefined
+            : (options.statsPeriod ?? "7d"),
+        start: options.start,
+        end: options.end,
+        cursor: options.cursor,
+      }),
+      dataset: "spans",
       field: fields,
-      project: projectParam === undefined ? undefined : [projectParam],
-      query: fullQuery || undefined,
       per_page: perPage,
-      statsPeriod:
-        options.start || options.end
-          ? undefined
-          : (options.statsPeriod ?? "7d"),
-      start: options.start,
-      end: options.end,
       sort: options.sort === "duration" ? "-span.duration" : "-timestamp",
-      cursor: options.cursor,
-    }),
+    },
   });
   const page = unwrapPaginatedResult<unknown>(result, "Failed to list spans");
   const response: SpansResponse = validateResponse(

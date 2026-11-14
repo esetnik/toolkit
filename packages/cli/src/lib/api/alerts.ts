@@ -422,12 +422,11 @@ export async function listMetricAlertsPaginated(
   const result = await listOrganizationDetectors({
     ...config,
     path: { organization_id_or_slug: orgSlug },
-    query: omitUndefined({
+    query: {
+      ...omitUndefined({ cursor: options.cursor, per_page: options.perPage }),
       query: METRIC_DETECTOR_QUERY,
       sortBy: "-id",
-      cursor: options.cursor,
-      per_page: options.perPage,
-    }),
+    },
   });
   const { data, nextCursor } = unwrapPaginatedResult<MetricDetector[]>(
     result,
