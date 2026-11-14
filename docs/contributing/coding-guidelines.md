@@ -79,8 +79,20 @@ from the `typescript` catalog entry).
 - Oxlint runs type-aware (`options.typeAware` in `.oxlintrc.json`, backed by
   `oxlint-tsgolint`). `typescript/return-await` (`always`) is on repo-wide:
   write `return await` in async functions so callers stay in async stack
-  traces. Type-aware correctness rules that still have a backlog are turned
-  off at the root; #1573 tracks enabling them.
+  traces.
+- Repo-wide promise and error rules: `no-misused-promises`,
+  `switch-exhaustiveness-check` (a `default` branch counts),
+  `only-throw-error`, `prefer-promise-reject-errors`, `no-base-to-string`, and
+  `no-unsafe-enum-comparison`. In the CLI, rethrow a caught value recorded
+  earlier (for example by a callback) with `rethrow()` from
+  `src/lib/rethrow.ts`, so it reaches callers unchanged.
+- Non-test source outside the CLI also gets `no-explicit-any`,
+  `no-non-null-assertion`, `no-unnecessary-condition`, and the `no-unsafe-*`
+  rules. Validate untrusted data (zod or a type guard) instead of reading it as
+  `any`. `packages/cli/src` already bans `any` and `!`.
+- Type-aware lint reads workspace packages through their built declarations.
+  Build them before linting, or imports read as error types:
+  `pnpm --filter '@sentry/mcp-core...' --filter @sentry/logger run build`.
 - Copy and combine iterables with spread: `[...set]`, `[...a, ...b]`,
   `[...path, key]`. `unicorn/prefer-spread` enforces this repo-wide and
   autofixes `Array.from(x)` and `.slice()`. Spread rejects non-iterables at
