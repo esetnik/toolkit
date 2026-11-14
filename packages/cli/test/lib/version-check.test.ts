@@ -619,6 +619,7 @@ describe("maybeCheckForUpdateInBackground", () => {
             init?.signal ?? (input instanceof Request ? input.signal : null);
           if (signal) {
             signals.push(signal);
+            // oxlint-disable-next-line typescript/prefer-promise-reject-errors -- fetch rejects with the signal's abort reason, like the platform
             signal.addEventListener("abort", () => reject(signal.reason));
           }
         }),

@@ -560,7 +560,7 @@ export function tryListen(
         const boundPort = typeof addr === "object" && addr ? addr.port : port;
         resolve({ server, port: boundPort });
       });
-      server.once("error", async (err: NodeJS.ErrnoException) => {
+      server.once("error", (err: NodeJS.ErrnoException) => {
         server.close();
         if (err.code === "EADDRINUSE") {
           attempts += 1;
@@ -576,8 +576,7 @@ export function tryListen(
           logger.warn(
             `Port ${port} is in use, retrying in ${PORT_RETRY_DELAY_MS / 1000}s (attempt ${attempts}/${MAX_PORT_RETRIES})...`,
           );
-          await sleep(PORT_RETRY_DELAY_MS);
-          resolve(attempt());
+          resolve(sleep(PORT_RETRY_DELAY_MS).then(attempt));
           return;
         }
         reject(err);

@@ -289,6 +289,7 @@ describe("fetchLatestFromGitHub", () => {
         });
       }
       controller.abort(reason);
+      // oxlint-disable-next-line typescript/only-throw-error -- the test rethrows the abort reason unchanged
       throw reason;
     });
 

@@ -400,7 +400,7 @@ function execFileUnreffed(
       args,
       { encoding: "utf-8", ...opts },
       (err, stdout) => {
-        if (err) {
+        if (err instanceof Error) {
           reject(err);
         } else {
           resolve(stdout);

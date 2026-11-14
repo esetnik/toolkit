@@ -67,6 +67,7 @@ import {
 import { logger } from "./logger.js";
 import { clearPatchCache } from "./patch-cache.js";
 import { makeByteProgress, type SetMessage } from "./progress.js";
+import { rethrow } from "./rethrow.js";
 
 /** Scoped logger for upgrade operations */
 const log = logger.withTag("upgrade");
@@ -996,7 +997,7 @@ async function streamDecompressToFile(
   }
 
   if (streamError !== undefined) {
-    throw streamError;
+    rethrow(streamError);
   }
 }
 

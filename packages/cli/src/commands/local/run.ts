@@ -629,9 +629,9 @@ export const runCommand = buildCommand({
 
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
     if (flags.timeout > 0) {
-      timeoutId = setTimeout(async () => {
+      timeoutId = setTimeout(() => {
         logger.warn(`Timeout: killing child after ${flags.timeout}s`);
-        await gracefulKill(child);
+        void gracefulKill(child);
       }, flags.timeout * 1000);
     }
 

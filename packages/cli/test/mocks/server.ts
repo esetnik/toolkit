@@ -150,6 +150,7 @@ export function createMockServer(
 
     async start() {
       // test mock server requires branching for route matching
+      // oxlint-disable-next-line typescript/no-misused-promises -- node:http ignores the handler's promise; route handlers answer every request
       server = createServer(async (nodeReq, nodeRes) => {
         const serverUrl = `http://localhost:${port}`;
         const req = await toWebRequest(nodeReq, serverUrl);

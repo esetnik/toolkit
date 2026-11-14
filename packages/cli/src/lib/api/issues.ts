@@ -41,6 +41,7 @@ import {
   unwrapResult,
 } from "./infrastructure.js";
 import { omitUndefined } from "../omit-undefined.js";
+import { rethrow } from "../rethrow.js";
 
 const TRAILING_SLASH_RE = /\/$/;
 
@@ -384,7 +385,7 @@ export async function findIssueInOrgs(
     ),
   );
   if (!found && failure) {
-    throw failure;
+    rethrow(failure);
   }
   return found;
 }

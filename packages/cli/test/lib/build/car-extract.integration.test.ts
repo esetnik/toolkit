@@ -270,6 +270,7 @@ describe.skipIf(process.platform !== "darwin" || process.arch !== "arm64")(
         const uploaded: Uint8Array[] = [];
         const unexpected: string[] = [];
         const fixtureState = { origin: "", errors: 0 };
+        // oxlint-disable-next-line typescript/no-misused-promises -- node:http ignores the handler's promise; the handler catches its own errors
         const server = createServer(async (request, response) => {
           response.setHeader("Content-Type", "application/json");
           response.setHeader("Connection", "close");

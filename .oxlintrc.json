@@ -62,7 +62,10 @@
       }
     ],
     "typescript/only-throw-error": "error",
-    "typescript/prefer-promise-reject-errors": "error",
+    "typescript/prefer-promise-reject-errors": [
+      "error",
+      { "allowThrowingUnknown": true }
+    ],
     "typescript/no-base-to-string": "error",
     "typescript/no-unsafe-enum-comparison": "error"
   },

@@ -331,6 +331,9 @@ export function getRawDatabase(): Database {
     getDatabase();
   }
   if (openError !== undefined) {
+    // Inline rather than rethrow(): this module is on the shell-completion
+    // fast path, which has a module budget (test/script/cli-startup.test.ts).
+    // oxlint-disable-next-line typescript/only-throw-error -- rethrows the recorded open error unchanged
     throw openError;
   }
   // After getDatabase() call, rawDb is guaranteed to be set
