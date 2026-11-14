@@ -41,6 +41,26 @@ from the `typescript` catalog entry).
 - **Known exceptions.** `apps/cli-docs` runs `astro check` on TypeScript 6
   (the `astro-check` catalog) until `@astrojs/check` supports TypeScript 7.
   `@sentry/mcp-core` emits declarations through tsdown's tsgo backend.
+- **tsrs (experimental, opt-in).** [tsrs](https://github.com/oxc-project/tsrs)
+  is a faster TypeScript-compatible checker. Toolkit doesn't depend on it, and
+  CI never runs it. Oxlint picks `tsrs-lint` automatically when the package is
+  installed, so keep it out of the workspace: install it into a scratch
+  directory and select it explicitly.
+
+  ```bash
+  npm install --prefix ~/.cache/tsrs tsrs@0.25.0-ts7.1.0-beta
+  # Type-aware lint with the tsrs backend (same diagnostics, ~3x faster here):
+  OXLINT_TSGOLINT_PATH=~/.cache/tsrs/node_modules/.bin/tsrs-lint pnpm exec oxlint .
+  # Check one program:
+  ~/.cache/tsrs/node_modules/.bin/tsrs -p packages/cli/tsconfig.json --noEmit
+  ```
+
+  tsrs implements TypeScript 7.1 beta, so it can report errors that the
+  TypeScript 7.0 gate doesn't. `pnpm run typecheck` decides. Don't use
+  `--fast` mode, which has reported false errors here. Don't use
+  `oxlint --type-check` as a substitute for `typecheck` either: it checks each
+  file under one tsconfig, so it misses programs such as toolkit-core's
+  browser build.
 
 ## Code Style
 
