@@ -6,19 +6,41 @@ product-specific implementation patterns.
 
 ## TypeScript Configuration
 
-```typescript
-// tsconfig.json essentials
-{
-  "compilerOptions": {
-    "strict": true,
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "sourceMap": true,
-    "noImplicitAny": true
-  }
-}
-```
+Every first-party TypeScript file is type-checked with TypeScript 7 (`tsc`
+from the `typescript` catalog entry).
+
+- **Shared policy.** `packages/mcp-server-tsconfig/tsconfig.policy.json` holds
+  the checking options for every project. They include `strict`,
+  `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`,
+  `noPropertyAccessFromIndexSignature`, `verbatimModuleSyntax`,
+  `erasableSyntaxOnly`, `noUnusedLocals`, `noUnusedParameters`, and
+  `skipLibCheck: false`. MCP packages extend
+  `@sentry/mcp-server-tsconfig/tsconfig.base.json` or `tsconfig.vite.json`, and
+  other projects extend the root `tsconfig.base.json`. A project sets only its
+  runtime: `module`, `moduleResolution`, `lib`, `types`, JSX, and emit.
+- **Don't weaken the policy.** `scripts/tsconfig-policy.test.mjs` runs in CI. It
+  fails when a project overrides a policy option, when a tracked TypeScript file
+  is in no checked program, or when a package that has a `tsconfig.json` has no
+  `typecheck` script.
+- **Library-check exceptions.** If a dependency's declarations fail and no
+  dependency fix exists, set `skipLibCheck: true` in the affected program only.
+  Add one comment line per dependency:
+  `// skipLibCheck exception: <dependency> <diagnostic>. Remove when <condition>.`
+- **Running the check.** `pnpm run typecheck` builds the workspace and runs
+  every package's `typecheck` script; `pnpm run tsc` is an alias. In a package,
+  run `pnpm run typecheck`. CI runs each package's script through
+  `package.json#sentryCi`. If results look stale after a tsconfig change,
+  delete the package's `node_modules/.tmp` build info.
+- **Optional properties.** Under `exactOptionalPropertyTypes`, `x?: T` does not
+  accept `undefined`. Omit the key with a conditional spread, or with
+  `omitUndefined()` in mcp-core. Declare `x?: T | undefined` only when callers
+  forward a value that can be undefined, such as an optional zod field.
+- **Compiler API.** TypeScript 7 has no JavaScript compiler API. Code that
+  parses or prints TypeScript imports `@typescript/typescript6`. `tsc` stays
+  on TypeScript 7.
+- **Known exceptions.** `apps/cli-docs` runs `astro check` on TypeScript 6
+  (the `astro-check` catalog) until `@astrojs/check` supports TypeScript 7.
+  `@sentry/mcp-core` emits declarations through tsdown's tsgo backend.
 
 ## Code Style
 
@@ -124,7 +146,7 @@ pnpm -w run lint        # Oxlint and ast-grep checks for root, MCP, and CLI
 pnpm -w run lint:fix    # Fix issues
 pnpm -w run format      # Format with Oxfmt
 pnpm --filter sentry run lint  # CLI-specific lint and format checks
-pnpm tsc --noEmit       # Type check
+pnpm -w run typecheck   # Type check every package
 pnpm test               # Run tests
 pnpm -w run build       # Build all
 ```
