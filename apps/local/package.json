@@ -5,12 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b tsconfig.app.json tsconfig.node.json && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "pnpm --filter sentry exec node script/ensure-generated.mjs schema grammar && vitest run",
     "test:integration": "pnpm run test src/App.integration.test.tsx",
-    "typecheck": "tsc -b",
+    "typecheck": "pnpm --filter sentry exec node script/ensure-generated.mjs && tsc -b",
     "sample": "node --experimental-strip-types --import ../../scripts/strip-types-resolve.mjs scripts/replay.ts"
   },
   "engines": {
