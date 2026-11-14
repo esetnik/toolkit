@@ -3,8 +3,7 @@
   // Shared type-checking policy for every first-party TypeScript project.
   // Projects set only their runtime on top of it: module resolution, lib,
   // ambient types, JSX, and emit. Do not weaken these options in a project;
-  // scripts/tsconfig-policy.test.mjs (added later in this series) fails when a
-  // project does.
+  // scripts/tsconfig-policy.test.mjs fails when a project does.
   //
   // MCP packages get it through ./tsconfig.base.json. Other projects extend
   // the root tsconfig.base.json, which extends this file. The policy lives in
