@@ -71,7 +71,7 @@
   "scripts": {
     "test": "vitest run",
     "test:ci": "vitest run --reporter=default --reporter=junit --outputFile=tests.junit.xml",
-    "tsc": "tsc --noEmit && tsc -p tsconfig.browser.json"
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.browser.json"
   },
   "dependencies": {
     "@sentry/api": "catalog:",

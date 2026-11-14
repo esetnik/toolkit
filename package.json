@@ -48,7 +48,8 @@
     "test": "pnpm run build && dotenv -e .env -e .env.local -- pnpm -r --filter '!@sentry/mcp-smoke-tests' --if-present run test",
     "test:ci": "pnpm run build && CI=true dotenv -e .env -e .env.local -- pnpm --stream -r run test:ci",
     "test:watch": "dotenv -e .env -e .env.local -- pnpm -r --parallel --if-present run test:watch",
-    "tsc": "pnpm run build && pnpm -r --if-present run tsc && pnpm -r --if-present run typecheck"
+    "tsc": "pnpm run typecheck",
+    "typecheck": "pnpm run build && pnpm -r --if-present run typecheck"
   },
   "dependencies": {
     "@ast-grep/cli": "catalog:",
